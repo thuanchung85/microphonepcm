@@ -5,7 +5,6 @@ import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Button
@@ -16,8 +15,15 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.viewModelScope
 import com.example.microphonepcm.voice.Recorder
+import com.example.talkandexecute.whisperengine.IWhisperEngine
+import com.example.talkandexecute.whisperengine.WhisperEngine
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.IOException
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,8 +34,13 @@ class MainActivity : AppCompatActivity() {
     lateinit var buttonStop:Button
     lateinit var buttonRecord:Button
     lateinit var buttonPlay:Button
+    lateinit var buttonDich:Button
 
     private var mediaPlayer: MediaPlayer? = null
+
+
+
+    private var whisperEngine: IWhisperEngine = WhisperEngine(this)
 
 //====================ON CREATE====================//
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,6 +98,54 @@ class MainActivity : AppCompatActivity() {
                 }
 
 
+                //====try load AI model=====//
+                // Get the AssetManager
+                val assetManager = assets
+                try {
+                    // List all files in the assets folder
+                    val files = assetManager.list("")
+
+                    // Print the file paths
+                    for (file in files!!) {
+                        Log.d("Asset", "File path: $file")
+                    }
+
+                    var modelFilePath = files.filter { it.contains("whisper-tiny.en.tflite") }.first()
+                    var vocabFilePath = files.filter { it.contains("filters_vocab_en.bin") }.first()
+                    whisperEngine.initialize(modelFilePath, vocabFilePath, false)
+
+
+
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+
+                //nut call whisper dich file wav
+                buttonDich = findViewById<Button>(R.id.buttonDich);
+                buttonDich.setOnClickListener {
+                    Log.d("CHUNG", "CHUNG whisperEngine.CALL")
+                    try {
+                        CoroutineScope(Dispatchers.Main).launch(Dispatchers.Default) {
+                            // Offline speech to text
+                           // val transcribedText = whisperEngine.transcribeFile(outputFileWav.absolutePath)
+                            var transcribedText= whisperEngine.transcribeFile(mVoiceRecorder?.fileWAVPath )
+                            var textView2 = findViewById<TextView>(R.id.textView2)
+                            textView2.text = transcribedText
+
+                        }
+                    } catch (e: RuntimeException) {
+
+
+                    } catch (e: IllegalStateException) {
+
+                    }
+
+
+
+
+                }
+
+
 
             } else {
                 // Permission not yet granted, request it
@@ -108,6 +167,20 @@ class MainActivity : AppCompatActivity() {
         mediaPlayer = null
     }
 
+
+
+
+
+    //======================CUSTOM FUNCTIONS================//
+
+
+
+
+
+
+
+
+    //=================
     fun startVoiceRecorder() {
         mVoiceRecorder = null
         Log.d("CHUNG", "CHUNG startVoiceRecorder")
@@ -157,4 +230,7 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
+
+
+    //======================CUSTOM FUNCTIONS================//
 }

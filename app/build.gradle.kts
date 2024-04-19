@@ -33,6 +33,15 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures {
+        mlModelBinding = true
+    }
+    externalNativeBuild {
+        cmake {
+            path = file("src/main/cpp/CMakeLists.txt")
+            version = "3.22.1"
+        }
+    }
 }
 
 dependencies {
@@ -42,10 +51,18 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.tensorflow.lite.support)
+    implementation(libs.tensorflow.lite.metadata)
+    implementation(libs.tensorflow.lite.gpu)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0")
     implementation ("androidx.preference:preference:1.2.0")
 
+    implementation ("org.tensorflow:tensorflow-lite:2.15.0")
+    implementation ("org.tensorflow:tensorflow-lite-gpu:2.15.0")
+    implementation ("org.tensorflow:tensorflow-lite-support:0.4.2")
+    implementation ("org.tensorflow:tensorflow-lite-select-tf-ops:2.15.0")
+    implementation ("org.tensorflow:tensorflow-lite-metadata:0.1.0-rc2")
 }
