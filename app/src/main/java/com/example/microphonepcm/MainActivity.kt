@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
                     Log.d("CHUNG", "CHUNG buttonRecord.Click")
                     startVoiceRecorder()
                     it.visibility = GONE;
-                    buttonStop.visibility = VISIBLE;
+
                     buttonPlay.visibility = GONE;
                 }
 
@@ -115,6 +115,19 @@ class MainActivity : AppCompatActivity() {
 
             override fun onListenStart() {
                 super.onListenStart()
+            }
+
+            override fun onVoiceEnd() {
+                super.onVoiceEnd()
+                runOnUiThread(){
+                    buttonStop.visibility = VISIBLE;
+                }
+
+            }
+
+            override fun onListenEnd() {
+                super.onListenEnd()
+
             }
         }
 

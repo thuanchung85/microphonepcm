@@ -138,13 +138,9 @@ public class Recorder {
      * Stops recording audio.
      */
     public void stop() {
-        //if (mThread != null) {
-            //if(mThread.isAlive() == false) {
-                //mThread.interrupt();
-                //mThread = null;
-            //}
-
-        //}
+        if (mThread != null) {
+            mThread.interrupt();
+        }
         if (mAudioRecord != null) {
             mAudioRecord.stop();
             mAudioRecord.release();
@@ -477,6 +473,8 @@ public class Recorder {
                 }
                 recorder.isListening = false;
                 recorder.timer.cancel();
+                Log.d("CHUNG-", String.format("CHUNG- LISTEN END -> onListenEnd " ));
+
             }
         }
     }
