@@ -3,15 +3,16 @@ package com.example.microphonepcm
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.content.res.AssetManager
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.CallSuper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -43,7 +44,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private var whisperEngine: IWhisperEngine = WhisperEngine(this)
-    var testWavFilePath = "english_test1.wav";
+
 //====================ON CREATE====================//
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,123 +56,30 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+    }
 
-        // Check if the permission has been granted already
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
-            // Permission already granted, you can proceed with audio recording
-            // Your audio recording logic here...
-
-            // Check if the permission has been granted already
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                // Permission already granted, you can proceed with file writing
-                // Your file writing logic here...
-                buttonPlay = findViewById<Button>(R.id.buttonPlay);
-                buttonPlay.visibility = GONE
-                buttonPlay.setOnClickListener {
-                    Log.d("CHUNG", "CHUNG buttonPlay.Click")
-                    // Initialize the MediaPlayer with the WAV file
-                    val filePath = mVoiceRecorder?.fileWAVPath // Replace this with your file path
-                    mediaPlayer = MediaPlayer().apply {
-                        setDataSource(filePath)
-                        prepare()
-                        start()
-                    }
-
-                }
+    override fun onStart() {
+        super.onStart()
 
 
-                 buttonRecord = findViewById<Button>(R.id.buttonRecord);
-                buttonRecord.setOnClickListener {
-                    Log.d("CHUNG", "CHUNG buttonRecord.Click")
-                    startVoiceRecorder()
-                    it.visibility = GONE;
-
-                    buttonPlay.visibility = GONE;
-                }
-
-                 buttonStop = findViewById<Button>(R.id.buttonStop);
-                buttonStop.visibility = GONE;
-                buttonStop.setOnClickListener {
-                    Log.d("CHUNG", "CHUNG buttonStop.Click")
-                    stopVoiceRecorder()
-                    it.visibility = GONE;
-                    buttonRecord.visibility = VISIBLE;
-                    buttonPlay.visibility = VISIBLE;
-                }
-
-
-
-                //nut call whisper dich file wav
-                buttonDich = findViewById<Button>(R.id.buttonDich);
-                buttonDich.setOnClickListener {
-                    Log.d("CHUNG", "CHUNG whisperEngine.CALL")
-
-                    val filePathModelAI_TFLITE_FILE =  getFileFromAssets(this, "whisper-tiny.en.tflite").absolutePath
-                    println(filePathModelAI_TFLITE_FILE)
-
-                    val filePathBinFile =  getFileFromAssets(this, "filters_vocab_en.bin").absolutePath
-                    println(filePathBinFile)
-
-                    val testwavFile =  getFileFromAssets(this, "english_test1.wav").absolutePath
-                    println(testwavFile)
-
-                    var F1 = File(filePathModelAI_TFLITE_FILE)
-                    if(F1.exists() == true){
-                        Log.d("CHUNG", "CHUNG F1.exists() == true")
-                    }
-                    var F2 = File(filePathBinFile)
-                    if(F2.exists() == true){
-                        Log.d("CHUNG", "CHUNG F2.exists() == true")
-                    }
-                    var F3 = File(testwavFile)
-                    if(F3.exists() == true){
-                        Log.d("CHUNG", "CHUNG F3.exists() == true")
-                    }
-                    var assetsManager = this.assets
-
-                    try {
-                        CoroutineScope(Dispatchers.Main).launch(Dispatchers.Default) {
-
-                            try {
-
-
-                                whisperEngine.initialize(assetsManager, F1.path, F2.path, false)
-                                //var transcribedText= whisperEngine.transcribeFile(F3.absolutePath )
-                                var transcribedText= whisperEngine.transcribeFile(mVoiceRecorder?.fileWAVPath)
-                                Log.d("CHUNG", "CHUNG whisperEngine.CALL + " + transcribedText)
-                                var textView = findViewById<TextView>(R.id.textView2)
-                                textView.text = transcribedText
-
-                            } catch (e:Exception) {
-                                e.printStackTrace()
-                            }
-
-
-                        }
-                    } catch (e: RuntimeException) {
-
-
-                    } catch (e: IllegalStateException) {
-
-                    }
-
-
-
-
-                }
-
-
-
-            } else {
-                // Permission not yet granted, request it
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1002)
-            }
-        } else {
-            // Permission not yet granted, request it
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 1001)
+        ///XIN QUYEN MICRO//nếu micro ok quyền rôi thi hỏi tiep vi tri nguoi dung. và quyền đọc ghi file
+        if (ContextCompat.checkSelfPermission(this.applicationContext, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE), 1123)
+        }
+        else{
+            initUI()
         }
 
+    }
 
+
+    @CallSuper
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if(requestCode == 1123){
+            initUI()
+        }
 
     }
 
@@ -187,6 +95,93 @@ class MainActivity : AppCompatActivity() {
 
 
     //======================CUSTOM FUNCTIONS================//
+
+    fun initUI(){
+
+        // Permission already granted, you can proceed with file writing
+        // Your file writing logic here...
+        buttonPlay = findViewById<Button>(R.id.buttonPlay);
+        buttonPlay.visibility = GONE
+        buttonPlay.setOnClickListener {
+            Log.d("CHUNG", "CHUNG buttonPlay.Click")
+            // Initialize the MediaPlayer with the WAV file
+            val filePath = mVoiceRecorder?.fileWAVPath // Replace this with your file path
+            mediaPlayer = MediaPlayer().apply {
+                setDataSource(filePath)
+                prepare()
+                start()
+            }
+            buttonDich.visibility = VISIBLE
+        }
+
+
+        buttonRecord = findViewById<Button>(R.id.buttonRecord);
+        buttonRecord.setOnClickListener {
+            Log.d("CHUNG", "CHUNG buttonRecord.Click")
+            startVoiceRecorder()
+            it.visibility = GONE;
+
+            buttonPlay.visibility = GONE;
+        }
+
+        buttonStop = findViewById<Button>(R.id.buttonStop);
+        buttonStop.visibility = GONE;
+        buttonStop.setOnClickListener {
+            Log.d("CHUNG", "CHUNG buttonStop.Click")
+            stopVoiceRecorder()
+            it.visibility = GONE;
+            buttonRecord.visibility = VISIBLE;
+            buttonPlay.visibility = VISIBLE;
+        }
+
+
+
+        //nut call whisper dich file wav
+        buttonDich = findViewById<Button>(R.id.buttonDich);
+        buttonDich.visibility = GONE
+        buttonDich.setOnClickListener {
+            Log.d("CHUNG", "CHUNG whisperEngine.CALL")
+
+            val filePathBinFile =  getFileFromAssets(this, "filters_vocab_en.bin").absolutePath
+            println(filePathBinFile)
+
+            //val testwavFile =  getFileFromAssets(this, "english_test1.wav").absolutePath
+            //println(testwavFile)
+
+            var assetsManager = this.assets
+
+            try {
+                CoroutineScope(Dispatchers.Main).launch(Dispatchers.Default) {
+
+                    try {
+                        //init model file
+                        whisperEngine.initialize(assetsManager,  filePathBinFile, false)
+
+                        //call model transcribeFile wav
+                        var transcribedText= whisperEngine.transcribeFile(mVoiceRecorder?.fileWAVPath)
+                        Log.d("CHUNG", "CHUNG whisperEngine.CALL + " + transcribedText)
+                        var textView = findViewById<TextView>(R.id.textView2)
+                        textView.text = transcribedText
+
+                    } catch (e:Exception) {
+                        e.printStackTrace()
+                    }
+
+
+                }
+            } catch (e: RuntimeException) {
+
+
+            } catch (e: IllegalStateException) {
+
+            }
+
+        }
+
+    }
+
+
+
     @Throws(IOException::class)
     fun getFileFromAssets(context: Context, fileName: String): File = File(context.cacheDir, fileName)
         .also {
@@ -198,19 +193,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
-
-    private fun getFilePath(assetName: String): String {
-        val outfile = File(filesDir, assetName)
-        if (!outfile.exists()) {
-            Log.d("CHUNG", "File not found - " + outfile.absolutePath)
-        }
-
-        Log.d("CHUNG", "Returned asset path: " + outfile.absolutePath)
-        return outfile.absolutePath
-    }
-
-
 
 
     //=================

@@ -29,13 +29,12 @@ class WhisperEngine(private val context: Context) : IWhisperEngine {
     @Throws(IOException::class)
     override fun initialize(
         assetManager:AssetManager,
-        modelPath: String?,
         vocabPath: String?,
         multilingual: Boolean
     ): Boolean {
         // Load model
         loadModel(assetManager)
-        Log.d(TAG, "Model is loaded...$modelPath")
+
 
         // Load filters and vocab
         val ret = mWhisperUtil.loadFiltersAndVocab(multilingual, vocabPath!!)
