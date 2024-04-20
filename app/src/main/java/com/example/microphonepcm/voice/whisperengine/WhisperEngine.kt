@@ -1,10 +1,10 @@
 package com.example.talkandexecute.whisperengine
 
 import android.content.Context
+import android.content.res.AssetManager
 import android.util.Log
 import com.example.microphonepcm.voice.Util.WaveUtil.getSamples
 import com.example.microphonepcm.voice.Util.WhisperUtil
-
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.Tensor
@@ -13,7 +13,9 @@ import java.io.FileInputStream
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
+
 
 class WhisperEngine(private val context: Context) : IWhisperEngine {
     private val TAG = "WhisperEngineJava"
@@ -26,12 +28,13 @@ class WhisperEngine(private val context: Context) : IWhisperEngine {
 
     @Throws(IOException::class)
     override fun initialize(
+        assetManager:AssetManager,
         modelPath: String?,
         vocabPath: String?,
         multilingual: Boolean
     ): Boolean {
         // Load model
-        loadModel(modelPath)
+        loadModel(assetManager)
         Log.d(TAG, "Model is loaded...$modelPath")
 
         // Load filters and vocab
@@ -62,9 +65,15 @@ class WhisperEngine(private val context: Context) : IWhisperEngine {
         return result
     }
 
+
+
+
+
+
     @Throws(IOException::class)
-    private fun loadModel(modelPath: String?) {
-        val fileDescriptor = context.assets.openFd(modelPath!!)
+    private fun loadModel(assetManager: AssetManager) {
+
+        val fileDescriptor =  assetManager.openFd("whisper-tiny.en.tflite")
         val inputStream = FileInputStream(fileDescriptor.fileDescriptor)
         val fileChannel = inputStream.channel
         val startOffset = fileDescriptor.startOffset
@@ -76,6 +85,7 @@ class WhisperEngine(private val context: Context) : IWhisperEngine {
         tfliteOptions.setNumThreads(Runtime.getRuntime().availableProcessors())
 
         mInterpreter = Interpreter(retFile, tfliteOptions)
+        Log.d("CHUNG", "CHUNG Model is loaded...!")
     }
 
     private fun getMelSpectrogram(wavePath: String?): FloatArray {
