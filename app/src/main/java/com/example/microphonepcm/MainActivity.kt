@@ -159,7 +159,7 @@ class MainActivity : AppCompatActivity() {
         // Permission already granted, you can proceed with file writing
         // Your file writing logic here...
         buttonPlay = findViewById<Button>(R.id.buttonPlay);
-
+        buttonPlay.visibility = GONE
         buttonPlay.setOnClickListener {
             Log.d("CHUNG", "CHUNG buttonPlay.Click")
             // Initialize the MediaPlayer with the WAV file
@@ -178,8 +178,10 @@ class MainActivity : AppCompatActivity() {
             Log.d("CHUNG", "CHUNG buttonRecord.Click")
             startVoiceRecorder()
             it.visibility = GONE;
-
+            var textView = findViewById<TextView>(R.id.textView2)
+            textView.text = "Please talk to the micro!"
             buttonPlay.visibility = GONE;
+            buttonDich.visibility = GONE
         }
 
         buttonStop = findViewById<Button>(R.id.buttonStop);
@@ -196,7 +198,7 @@ class MainActivity : AppCompatActivity() {
 
         //nut call whisper dich file wav
         buttonDich = findViewById<Button>(R.id.buttonDich);
-       // buttonDich.visibility = GONE
+        buttonDich.visibility = GONE
         buttonDich.setOnClickListener {
             Log.d("CHUNG", "CHUNG whisperEngine.CALL")
 
