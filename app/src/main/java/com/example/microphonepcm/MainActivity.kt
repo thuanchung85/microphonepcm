@@ -2,14 +2,22 @@ package com.example.microphonepcm
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaPlayer
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.provider.Settings
 import android.util.Log
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Button
+import android.widget.Spinner
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.CallSuper
@@ -41,8 +49,8 @@ class MainActivity : AppCompatActivity() {
 
     private var mediaPlayer: MediaPlayer? = null
 
-
-
+    var modelfilename = ""
+    var filePathBinFile =  ""
     private var whisperEngine: IWhisperEngine = WhisperEngine(this)
 
 //====================ON CREATE====================//
@@ -56,11 +64,61 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+    //drop down menu choose language
+    val spinner = findViewById<Spinner>(R.id.spinner)
+    val items = arrayOf("English", "Viet Nam", "Korea")
+    val adapter = ArrayAdapter<String>(
+        this,
+        android.R.layout.simple_spinner_dropdown_item,
+        items
+    )
+    spinner.setAdapter(adapter)
+
+    spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        override fun onItemSelected(
+            arg0: AdapterView<*>?,
+            arg1: View?,
+            arg2: Int,
+            arg3: Long
+        ) {
+            // Do what you want
+            val items = spinner.selectedItem.toString()
+            Log.d("CHUNG", "CHUNG " + items)
+            when (items) {
+                "English" -> {
+                    filePathBinFile = getFileFromAssets(this@MainActivity, "filters_vocab_en.bin").absolutePath
+                    modelfilename = "whisper-tiny.en.tflite"
+                }
+
+                "Viet Nam" -> {
+                    filePathBinFile = getFileFromAssets(this@MainActivity, "filters_vocab_vi.bin").absolutePath
+                    modelfilename = "PhoWhisper-tiny.tflite"
+                }
+                "Korea" -> {
+                    filePathBinFile = getFileFromAssets(this@MainActivity, "filters_vocab_en.bin").absolutePath
+                    modelfilename = "whisper-tiny.en.tflite"
+                }
+            }
+        }
+
+        override fun onNothingSelected(arg0: AdapterView<*>?) {
+            filePathBinFile = getFileFromAssets(this@MainActivity, "filters_vocab_en.bin").absolutePath
+            modelfilename = "whisper-tiny.en.tflite"
+        }
     }
+
+}
 
     override fun onStart() {
         super.onStart()
-
+        //từ android sdk 33 thì phải vào setting cấp quyền ghi file băng tay
+        if (Build.VERSION.SDK_INT >= 30) {
+            if (!Environment.isExternalStorageManager()) {
+                val getpermission = Intent()
+                getpermission.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+                startActivity(getpermission)
+            }
+        }
 
         ///XIN QUYEN MICRO//nếu micro ok quyền rôi thi hỏi tiep vi tri nguoi dung. và quyền đọc ghi file
         if (ContextCompat.checkSelfPermission(this.applicationContext, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -101,11 +159,11 @@ class MainActivity : AppCompatActivity() {
         // Permission already granted, you can proceed with file writing
         // Your file writing logic here...
         buttonPlay = findViewById<Button>(R.id.buttonPlay);
-        buttonPlay.visibility = GONE
+
         buttonPlay.setOnClickListener {
             Log.d("CHUNG", "CHUNG buttonPlay.Click")
             // Initialize the MediaPlayer with the WAV file
-            val filePath = mVoiceRecorder?.fileWAVPath // Replace this with your file path
+            val filePath = Environment.getExternalStorageDirectory().absolutePath + "/YourAppName/CHUNGrecorded_audio_NEW.wav"//mVoiceRecorder?.fileWAVPath // Replace this with your file path
             mediaPlayer = MediaPlayer().apply {
                 setDataSource(filePath)
                 prepare()
@@ -138,15 +196,15 @@ class MainActivity : AppCompatActivity() {
 
         //nut call whisper dich file wav
         buttonDich = findViewById<Button>(R.id.buttonDich);
-        buttonDich.visibility = GONE
+       // buttonDich.visibility = GONE
         buttonDich.setOnClickListener {
             Log.d("CHUNG", "CHUNG whisperEngine.CALL")
 
-            val filePathBinFile =  getFileFromAssets(this, "filters_vocab_en.bin").absolutePath
-            println(filePathBinFile)
+            //val filePathBinFile =  getFileFromAssets(this, "filters_vocab_en.bin").absolutePath
+
 
             //val testwavFile =  getFileFromAssets(this, "english_test1.wav").absolutePath
-            //println(testwavFile)
+
 
             var assetsManager = this.assets
 
@@ -155,10 +213,13 @@ class MainActivity : AppCompatActivity() {
 
                     try {
                         //init model file
-                        whisperEngine.initialize(assetsManager,  filePathBinFile, false)
+                       // whisperEngine.initialize(assetsManager,  filePathBinFile, false, "whisper-tiny.en.tflite")
+
+                        whisperEngine.initialize(assetsManager,  filePathBinFile, false, modelfilename)
 
                         //call model transcribeFile wav
-                        var transcribedText= whisperEngine.transcribeFile(mVoiceRecorder?.fileWAVPath)
+                        val filePath = Environment.getExternalStorageDirectory().absolutePath + "/YourAppName/CHUNGrecorded_audio_NEW.wav"
+                        var transcribedText= whisperEngine.transcribeFile(filePath)//(mVoiceRecorder?.fileWAVPath)
                         Log.d("CHUNG", "CHUNG whisperEngine.CALL + " + transcribedText)
                         var textView = findViewById<TextView>(R.id.textView2)
                         textView.text = transcribedText

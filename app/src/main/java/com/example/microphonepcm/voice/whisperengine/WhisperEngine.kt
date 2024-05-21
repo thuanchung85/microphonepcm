@@ -30,10 +30,11 @@ class WhisperEngine(private val context: Context) : IWhisperEngine {
     override fun initialize(
         assetManager:AssetManager,
         vocabPath: String?,
-        multilingual: Boolean
+        multilingual: Boolean,
+        modelFile:String
     ): Boolean {
         // Load model
-        loadModel(assetManager)
+        loadModel(assetManager, modelFile)//"whisper-tiny.en.tflite")
 
 
         // Load filters and vocab
@@ -70,9 +71,9 @@ class WhisperEngine(private val context: Context) : IWhisperEngine {
 
 
     @Throws(IOException::class)
-    private fun loadModel(assetManager: AssetManager) {
+    private fun loadModel(assetManager: AssetManager, modelnamefile:String) {
 
-        val fileDescriptor =  assetManager.openFd("whisper-tiny.en.tflite")
+        val fileDescriptor =  assetManager.openFd(modelnamefile)//("whisper-tiny.en.tflite")
         val inputStream = FileInputStream(fileDescriptor.fileDescriptor)
         val fileChannel = inputStream.channel
         val startOffset = fileDescriptor.startOffset

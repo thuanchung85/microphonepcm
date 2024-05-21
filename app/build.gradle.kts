@@ -68,7 +68,7 @@ dependencies {
     implementation ("androidx.preference:preference:1.2.0")
 
     implementation ("org.tensorflow:tensorflow-lite:2.15.0")
-    implementation ("org.tensorflow:tensorflow-lite-gpu:2.15.0")
+    //implementation ("org.tensorflow:tensorflow-lite-gpu:2.15.0")
     implementation ("org.tensorflow:tensorflow-lite-support:0.4.2")
     implementation ("org.tensorflow:tensorflow-lite-select-tf-ops:2.15.0")
     implementation ("org.tensorflow:tensorflow-lite-metadata:0.1.0-rc2")

@@ -7,6 +7,6 @@ interface IWhisperEngine {
     val isInitialized: Boolean
 
     @Throws(IOException::class)
-    fun initialize(assetManager: AssetManager, vocabPath: String?, multilingual: Boolean): Boolean
+    fun initialize(assetManager: AssetManager, vocabPath: String?, multilingual: Boolean, modelFile:String): Boolean
     fun transcribeFile(wavePath: String?): String
 }

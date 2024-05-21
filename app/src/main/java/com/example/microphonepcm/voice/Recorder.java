@@ -227,8 +227,8 @@ public class Recorder {
         @Override
         public void run() {
 
-                String OUTPUT_FILE = "CHUNGrecorded_audio.pcm";
-                String OUTPUT_FILE_WAV = "CHUNGrecorded_audio.wav";
+                String OUTPUT_FILE = "CHUNGrecorded_audio_NEW.pcm";
+                String OUTPUT_FILE_WAV = "CHUNGrecorded_audio_NEW.wav";
                 File directory = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/YourAppName");
                 if (!directory.exists()) {
                     directory.mkdirs();
@@ -301,6 +301,7 @@ public class Recorder {
                             try {
                                 assert os != null;
                                 if(pcmData != null) {
+                                    Log.e("CHUNG","CHUNG- ProcessVoice pcmData.length " + pcmData.length);
                                     os.write(pcmData);
                                 }
 
@@ -320,6 +321,7 @@ public class Recorder {
                         try {
                             assert os != null;
                             if(pcmData != null) {
+                                Log.e("CHUNG","CHUNG- ProcessVoice pcmData.length " + pcmData.length);
                                 os.write(pcmData);
                             }
 
@@ -339,7 +341,7 @@ public class Recorder {
                         File out = new File(outputFileWav.getPath());
                         try {
 
-                            PCMToWAV(read, out, mAudioRecord.getChannelCount(), getSampleRate(), 16);
+                            PCMToWAV(read, out, mAudioRecord.getChannelCount(), getSampleRate() , 16);
 
                         } catch (IOException e) {
                             throw new RuntimeException(e);
@@ -355,6 +357,7 @@ public class Recorder {
                     try {
                         assert os != null;
                         if(pcmData != null) {
+                            Log.e("CHUNG","CHUNG- ProcessVoice pcmData.length " + pcmData.length);
                             os.write(pcmData);
                         }
 
@@ -371,7 +374,7 @@ public class Recorder {
                         File out = new File(outputFileWav.getPath());
                         try {
 
-                            PCMToWAV(read, out, mAudioRecord.getChannelCount(), getSampleRate(), 16);
+                            PCMToWAV(read, out, mAudioRecord.getChannelCount(), getSampleRate() , 16);
 
                         } catch (IOException e) {
                             throw new RuntimeException(e);
