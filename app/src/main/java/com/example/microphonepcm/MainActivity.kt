@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
 
     //drop down menu choose language
     val spinner = findViewById<Spinner>(R.id.spinner)
-    val items = arrayOf("English", "Viet Nam", "Korea")
+    val items = arrayOf("English", "Vietnamese", "Korean")
     val adapter = ArrayAdapter<String>(
         this,
         android.R.layout.simple_spinner_dropdown_item,
@@ -90,13 +90,13 @@ class MainActivity : AppCompatActivity() {
                     modelfilename = "whisper-tiny.en.tflite"
                 }
 
-                "Viet Nam" -> {
+                "Vietnamese" -> {
                     filePathBinFile = getFileFromAssets(this@MainActivity, "filters_vocab_vi.bin").absolutePath
                     modelfilename = "PhoWhisper-tiny.tflite"
                 }
-                "Korea" -> {
-                    filePathBinFile = getFileFromAssets(this@MainActivity, "filters_vocab_en.bin").absolutePath
-                    modelfilename = "whisper-tiny.en.tflite"
+                "Korean" -> {
+                    filePathBinFile = getFileFromAssets(this@MainActivity, "filters_vocab_ko.bin").absolutePath
+                    modelfilename = "whisper-tiny-ko.tflite"
                 }
             }
         }
