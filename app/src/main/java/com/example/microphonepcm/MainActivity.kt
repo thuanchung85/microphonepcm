@@ -7,7 +7,10 @@ import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import android.view.View.GONE
@@ -31,6 +34,8 @@ class MainActivity : AppCompatActivity(), AsyncTaskListener {
 
     private var mVoiceRecorder: Recorder? = null
     protected var mVoiceCallback: Recorder.Callback? = null
+
+    var mWaveView: siriWaveView? = null
 
 
     lateinit var buttonOKFileWAV:Button
@@ -71,6 +76,24 @@ class MainActivity : AppCompatActivity(), AsyncTaskListener {
         mediaPlayer?.release()
         mediaPlayer = null
     }
+    var outMetrics = DisplayMetrics()
+    override fun onResume() {
+        super.onResume()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val display = this.display
+            display?.getRealMetrics(outMetrics)
+        } else {
+            @Suppress("DEPRECATION")
+            val display = this.windowManager.defaultDisplay
+            @Suppress("DEPRECATION")
+            display.getMetrics(outMetrics)
+        }
+
+        //siriwave
+        mWaveView = findViewById(R.id.siriWaveView2)
+
+    }
 
     //=========CALL BACK FUNCTION========//
     //==============KHI CẤP QUYỀN XONG==============//
@@ -99,6 +122,11 @@ class MainActivity : AppCompatActivity(), AsyncTaskListener {
             }
         }
 
+
+
+
+
+        //nut play lai file wav da record
         buttonPlay = findViewById<Button>(R.id.buttonPlay);
         buttonPlay.visibility = GONE
         buttonPlay.setOnClickListener {
@@ -138,6 +166,16 @@ class MainActivity : AppCompatActivity(), AsyncTaskListener {
             buttonOKFileWAV.visibility = GONE;
             buttonPlay.visibility = GONE;
             buttonOKFileWAV.text = "Please, talk."
+
+            runOnUiThread{
+                //chạy wave siri
+                mWaveView!!.initialize(outMetrics)
+                mWaveView!!.speechStarted()
+                Handler(Looper.getMainLooper()).postDelayed({
+                    mWaveView?.speechEnded()
+                }, 5000)
+                mWaveView?.speechStarted()
+            }
         }
 
         //status

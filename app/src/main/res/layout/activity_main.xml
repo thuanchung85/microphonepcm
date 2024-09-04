@@ -22,6 +22,17 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.11" />
 
+    <com.example.microphonepcm.siriWaveView
+        android:id="@+id/siriWaveView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/mTtextview"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+
+        app:layout_constraintBottom_toTopOf="@+id/buttonOKFileWAV"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -33,16 +44,18 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:layout_editor_absoluteX="0dp">
+
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_gravity="center"
+            android:layout_height="match_parent"
 
-            android:layout_height="match_parent">
+            android:layout_gravity="center">
+
             <androidx.appcompat.widget.AppCompatButton
-                android:layout_gravity="center"
                 android:id="@+id/buttonRecord"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
+                android:layout_gravity="center"
                 android:background="@drawable/background_corner_shap4"
                 android:drawableLeft="@drawable/microphone_342"
                 android:foreground="?android:attr/selectableItemBackground"
@@ -50,14 +63,13 @@
                 android:shadowColor="#000000"
                 android:shadowDx="2.5"
                 android:shadowDy="2.3"
-                android:shadowRadius="2.6"
-                />
+                android:shadowRadius="2.6" />
+
             <androidx.appcompat.widget.AppCompatButton
-                android:layout_gravity="center"
-                android:visibility="gone"
                 android:id="@+id/buttonStop"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
+                android:layout_gravity="center"
                 android:background="@drawable/background_corner_shap4"
                 android:drawableLeft="@drawable/video_pause_button"
                 android:foreground="?android:attr/selectableItemBackground"
@@ -66,7 +78,7 @@
                 android:shadowDx="2.5"
                 android:shadowDy="2.3"
                 android:shadowRadius="2.6"
-                />
+                android:visibility="gone" />
         </FrameLayout>
 
     </LinearLayout>
