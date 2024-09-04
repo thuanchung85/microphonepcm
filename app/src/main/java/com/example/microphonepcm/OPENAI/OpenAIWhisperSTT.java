@@ -18,7 +18,7 @@ import okhttp3.Response;
 
 public class OpenAIWhisperSTT extends AsyncTask<File, Void, String> {
 
-    private static final String OPENAI_API_KEY = "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";
+    private static final String OPENAI_API_KEY = "";//"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";
     private static final String OPENAI_API_URL = "https://api.openai.com/v1/audio/transcriptions";
 
     public OpenAIWhisperSTT(AsyncTaskListener listener) {
