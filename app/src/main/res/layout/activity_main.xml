@@ -10,34 +10,34 @@
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="197dp"
-        android:layout_height="52dp"
+        android:layout_width="344dp"
+        android:layout_height="54dp"
         android:gravity="center"
         android:text="Hello World!"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.135"
+        app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.103" />
+        app:layout_constraintVertical_bias="0.11" />
 
     <Button
         android:id="@+id/buttonRecord"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="100dp"
-        android:text="RECORD PCM AUDIO FILE"
+        android:text="Step 1: RECORD USER VOICE"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/buttonStop"
+        android:id="@+id/buttonOKFileWAV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:backgroundTint="@color/red"
-        android:text="OK I GOT YOUR VOICE"
+        android:text="Step 2: OK FILE WAV VOICE DONE"
         app:layout_constraintBottom_toTopOf="@+id/buttonRecord"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -47,12 +47,12 @@
         android:id="@+id/buttonPlay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:backgroundTint="@color/green"
-        android:text="Play WAV file"
+        android:text="Step 3: Play WAV file"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.692"
-        app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toTopOf="@+id/textView" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

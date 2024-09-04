@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
     protected var mVoiceCallback: Recorder.Callback? = null
 
 
-    lateinit var buttonStop:Button
+    lateinit var buttonOKFileWAV:Button
     lateinit var buttonRecord:Button
     lateinit var buttonPlay:Button
 
@@ -119,9 +119,9 @@ class MainActivity : AppCompatActivity() {
             buttonPlay.visibility = GONE;
         }
 
-        buttonStop = findViewById<Button>(R.id.buttonStop);
-        buttonStop.visibility = GONE;
-        buttonStop.setOnClickListener {
+        buttonOKFileWAV = findViewById<Button>(R.id.buttonOKFileWAV);
+        buttonOKFileWAV.visibility = GONE;
+        buttonOKFileWAV.setOnClickListener {
             Log.d("CHUNG", "CHUNG buttonStop.Click")
             stopVoiceRecorder()
             it.visibility = GONE;
@@ -142,7 +142,7 @@ class MainActivity : AppCompatActivity() {
             override fun onVoiceEnd() {
                 super.onVoiceEnd()
                 runOnUiThread(){
-                    buttonStop.visibility = VISIBLE;
+                    buttonOKFileWAV.visibility = VISIBLE;
                 }
 
             }
