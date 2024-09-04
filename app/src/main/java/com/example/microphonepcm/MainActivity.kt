@@ -1,9 +1,13 @@
 package com.example.microphonepcm
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaPlayer
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.view.View.GONE
@@ -11,6 +15,7 @@ import android.view.View.VISIBLE
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.CallSuper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -32,7 +37,8 @@ class MainActivity : AppCompatActivity() {
     private var mediaPlayer: MediaPlayer? = null
 
 //====================ON CREATE====================//
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?)
+    {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
@@ -42,64 +48,18 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-
-        // Check if the permission has been granted already
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
-            // Permission already granted, you can proceed with audio recording
-            // Your audio recording logic here...
-
-            // Check if the permission has been granted already
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                // Permission already granted, you can proceed with file writing
-                // Your file writing logic here...
-                buttonPlay = findViewById<Button>(R.id.buttonPlay);
-                buttonPlay.visibility = GONE
-                buttonPlay.setOnClickListener {
-                    Log.d("CHUNG", "CHUNG buttonPlay.Click")
-                    // Initialize the MediaPlayer with the WAV file
-                    val filePath = mVoiceRecorder?.fileWAVPath // Replace this with your file path
-                    mediaPlayer = MediaPlayer().apply {
-                        setDataSource(filePath)
-                        prepare()
-                        start()
-                    }
-
-                }
-
-
-                 buttonRecord = findViewById<Button>(R.id.buttonRecord);
-                buttonRecord.setOnClickListener {
-                    Log.d("CHUNG", "CHUNG buttonRecord.Click")
-                    startVoiceRecorder()
-                    it.visibility = GONE;
-
-                    buttonPlay.visibility = GONE;
-                }
-
-                 buttonStop = findViewById<Button>(R.id.buttonStop);
-                buttonStop.visibility = GONE;
-                buttonStop.setOnClickListener {
-                    Log.d("CHUNG", "CHUNG buttonStop.Click")
-                    stopVoiceRecorder()
-                    it.visibility = GONE;
-                    buttonRecord.visibility = VISIBLE;
-                    buttonPlay.visibility = VISIBLE;
-                }
-
-
-
-            } else {
-                // Permission not yet granted, request it
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1002)
-            }
-        } else {
-            // Permission not yet granted, request it
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 1001)
+        ///XIN QUYEN MICRO//nếu micro ok quyền rôi thi hỏi tiep vi tri nguoi dung. và quyền đọc ghi file
+        if (ContextCompat.checkSelfPermission(this.applicationContext, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE), 1123)
+        }
+        else{
+            initUI()
         }
 
 
-
-    }
+    }//end onCreate
 
     override fun onDestroy() {
         super.onDestroy()
@@ -108,7 +68,69 @@ class MainActivity : AppCompatActivity() {
         mediaPlayer = null
     }
 
-    fun startVoiceRecorder() {
+    //=========CALL BACK FUNCTION========//
+    //==============KHI CẤP QUYỀN XONG==============//
+    @CallSuper
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray)
+    {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(requestCode == 1123){
+            initUI()
+        }
+    }
+
+
+
+
+    //========PRIVATE FUN====//
+    private fun initUI()
+    {
+
+        //từ android sdk 33 thì phải vào setting cấp quyền ghi file băng tay
+        if (Build.VERSION.SDK_INT >= 30) {
+            if (!Environment.isExternalStorageManager()) {
+                val getpermission = Intent()
+                getpermission.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+                startActivity(getpermission)
+            }
+        }
+
+        buttonPlay = findViewById<Button>(R.id.buttonPlay);
+        buttonPlay.visibility = GONE
+        buttonPlay.setOnClickListener {
+            Log.d("CHUNG", "CHUNG buttonPlay.Click")
+            // Initialize the MediaPlayer with the WAV file
+            val filePath = mVoiceRecorder?.fileWAVPath // Replace this with your file path
+            mediaPlayer = MediaPlayer().apply {
+                setDataSource(filePath)
+                prepare()
+                start()
+            }
+
+        }
+
+
+        buttonRecord = findViewById<Button>(R.id.buttonRecord);
+        buttonRecord.setOnClickListener {
+            Log.d("CHUNG", "CHUNG buttonRecord.Click")
+            startVoiceRecorder()
+            it.visibility = GONE;
+
+            buttonPlay.visibility = GONE;
+        }
+
+        buttonStop = findViewById<Button>(R.id.buttonStop);
+        buttonStop.visibility = GONE;
+        buttonStop.setOnClickListener {
+            Log.d("CHUNG", "CHUNG buttonStop.Click")
+            stopVoiceRecorder()
+            it.visibility = GONE;
+            buttonRecord.visibility = VISIBLE;
+            buttonPlay.visibility = VISIBLE;
+        }
+
+    }
+    private fun startVoiceRecorder() {
         mVoiceRecorder = null
         Log.d("CHUNG", "CHUNG startVoiceRecorder")
         mVoiceCallback = object : Recorder.Callback() {
@@ -145,7 +167,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun stopVoiceRecorder() {
+    private fun stopVoiceRecorder() {
         if (mVoiceRecorder != null) {
 
             var textView = findViewById<TextView>(R.id.textView)
