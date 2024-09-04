@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     tools:context=".MainActivity">
 
 
@@ -21,37 +22,79 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.11" />
 
-    <Button
-        android:id="@+id/buttonRecord"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="100dp"
-        android:text="Step 1: RECORD USER VOICE"
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+
+        android:layout_height="142dp"
+        android:layout_marginBottom="4dp"
+        android:gravity="center"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        tools:layout_editor_absoluteX="0dp">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+
+            android:layout_height="match_parent">
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_gravity="center"
+                android:id="@+id/buttonRecord"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:background="@drawable/background_corner_shap4"
+                android:drawableLeft="@drawable/microphone_342"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:paddingLeft="35dp"
+                android:shadowColor="#000000"
+                android:shadowDx="2.5"
+                android:shadowDy="2.3"
+                android:shadowRadius="2.6"
+                />
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:id="@+id/buttonStop"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:background="@drawable/background_corner_shap4"
+                android:drawableLeft="@drawable/video_pause_button"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:paddingLeft="20dp"
+                android:shadowColor="#000000"
+                android:shadowDx="2.5"
+                android:shadowDy="2.3"
+                android:shadowRadius="2.6"
+                />
+        </FrameLayout>
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/buttonOKFileWAV"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/red"
-        android:text="Step 2: OK FILE WAV VOICE DONE"
-        app:layout_constraintBottom_toTopOf="@+id/buttonRecord"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:backgroundTint="@color/black"
+        android:text="OK FILE WAV VOICE DONE"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintStart_toStartOf="@+id/linearLayout" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonPlay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_marginTop="24dp"
-        android:backgroundTint="@color/green"
-        android:text="Step 3: Play WAV file"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:background="@drawable/background_corner_shap4"
+        android:drawableLeft="@drawable/play_svgrepo_com"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:paddingLeft="30dp"
+        android:shadowColor="#000000"
+        android:shadowDx="2.5"
+        android:shadowDy="2.3"
+        android:shadowRadius="2.6"
+        app:layout_constraintEnd_toEndOf="@+id/textView"
+        app:layout_constraintStart_toStartOf="@+id/textView"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
 

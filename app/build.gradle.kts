@@ -47,5 +47,5 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation ("androidx.preference:preference:1.2.0")
-
+    implementation ("com.squareup.okhttp3:okhttp:4.9.1")
 }

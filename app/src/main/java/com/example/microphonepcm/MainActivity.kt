@@ -21,10 +21,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.microphonepcm.OPENAI.AsyncTaskListener
+import com.example.microphonepcm.OPENAI.OpenAIWhisperSTT
 import com.example.microphonepcm.voice.Recorder
+import java.io.File
 import java.io.IOException
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), AsyncTaskListener {
 
     private var mVoiceRecorder: Recorder? = null
     protected var mVoiceCallback: Recorder.Callback? = null
@@ -32,6 +35,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var buttonOKFileWAV:Button
     lateinit var buttonRecord:Button
+    lateinit var buttonStop:Button
     lateinit var buttonPlay:Button
 
     private var mediaPlayer: MediaPlayer? = null
@@ -105,29 +109,41 @@ class MainActivity : AppCompatActivity() {
                 setDataSource(filePath)
                 prepare()
                 start()
+                buttonOKFileWAV.text = " "
             }
 
+            //send to OPENAI
+            sendToOpenAI()
         }
 
+        //nut stop record wav
+        buttonStop = findViewById<Button>(R.id.buttonStop);
+        buttonStop.setOnClickListener {
+            Log.d("CHUNG", "CHUNG buttonStop.Click")
+            stopVoiceRecorder()
 
+            buttonRecord.visibility = VISIBLE;
+            buttonPlay.visibility = VISIBLE;
+            buttonStop.visibility = GONE;
+            buttonOKFileWAV.text = "WAV FILE DONE."
+        }
+
+        //nut record wav
         buttonRecord = findViewById<Button>(R.id.buttonRecord);
         buttonRecord.setOnClickListener {
             Log.d("CHUNG", "CHUNG buttonRecord.Click")
             startVoiceRecorder()
             it.visibility = GONE;
-
+            buttonStop.visibility = VISIBLE;
+            buttonOKFileWAV.visibility = GONE;
             buttonPlay.visibility = GONE;
+            buttonOKFileWAV.text = "Please, talk."
         }
 
+        //status
         buttonOKFileWAV = findViewById<Button>(R.id.buttonOKFileWAV);
         buttonOKFileWAV.visibility = GONE;
-        buttonOKFileWAV.setOnClickListener {
-            Log.d("CHUNG", "CHUNG buttonStop.Click")
-            stopVoiceRecorder()
-            it.visibility = GONE;
-            buttonRecord.visibility = VISIBLE;
-            buttonPlay.visibility = VISIBLE;
-        }
+
 
     }
     private fun startVoiceRecorder() {
@@ -143,6 +159,8 @@ class MainActivity : AppCompatActivity() {
                 super.onVoiceEnd()
                 runOnUiThread(){
                     buttonOKFileWAV.visibility = VISIBLE;
+
+
                 }
 
             }
@@ -179,4 +197,18 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
+
+
+    private fun sendToOpenAI(){
+         val  openAIWhipper =  OpenAIWhisperSTT(this)
+        if(mVoiceRecorder!!.fileWAVPath != null) {
+            val recordedAudioFile = File(mVoiceRecorder!!.fileWAVPath)
+            openAIWhipper.execute(recordedAudioFile);
+        }
+    }
+
+    override fun onTaskComplete(result: String?) {
+        Log.w("CHUNG","CHUNG onTaskComplete : " + result )
+    }
+
 }

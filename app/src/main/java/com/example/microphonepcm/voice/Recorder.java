@@ -46,7 +46,7 @@ public class Recorder {
     private static final int CHANNEL = AudioFormat.CHANNEL_IN_MONO;
     private static final int ENCODING = AudioFormat.ENCODING_PCM_16BIT;
     public static final int MAX_AMPLITUDE_THRESHOLD = 15000;
-    public static final int DEFAULT_AMPLITUDE_THRESHOLD = 2000; //original: 1500
+    public static final int DEFAULT_AMPLITUDE_THRESHOLD = 15000; //original: 1500
     public static final int MIN_AMPLITUDE_THRESHOLD = 400;
     public static final int MAX_SPEECH_TIMEOUT_MILLIS = 5000;
     public static final int DEFAULT_SPEECH_TIMEOUT_MILLIS = 800; //original: 2000
@@ -73,6 +73,8 @@ public class Recorder {
     public FileOutputStream os = null;
     public String fileWAVPath = "";
     public Context myContext;
+
+    public File FileWAVOutput ;
 
     public Recorder( @NonNull Callback callback, Context context) throws IOException {
         if (os != null) {
